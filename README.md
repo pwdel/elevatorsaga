@@ -37,16 +37,22 @@ Versioning and releases are kept track of via [tagging](/notes/tagging_releases.
 ### Learned Along the Way
 
 * General javascript practices, scheduling algorithms and the interesting nuances in differences between scheduling algorithms and actual real world physical algorithms.
+* Tagging - the author had not previously used tagging. Tagging is super useful as long-lived branches can be a nightmare to sort out. Previously the author used project milestones with links but tagging is great because it packages up source code at a given point in time for download whereas links to commits do not parse out the code that easily as a ready made downloadable zip file, as tagging does.
 
 ### Getting Started - How to Install and Run
 
 1. Check the [versioning table above within README.md](/README.md#Versioning).
-2. Copy and paste the contents of [](/main.js) into the [Elevator Saga IDE Interface]().
+2. Copy and paste the contents of [main.js](/main.js) into the [Elevator Saga IDE Interface]().
 
+### Coding Conventions
 
+* For the most part, try to do the best possible to abide by [W3School Convention Formatting](https://www.w3schools.com/js/js_conventions.asp).
+* ElevatorSaga appears to be OK with tabs, so use tabs rather than spaces for visibility.
 
 ### Credits
 
-
+N/A
 
 ### License
+
+N/A
