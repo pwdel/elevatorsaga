@@ -26,13 +26,35 @@ $ git tag -a v1.0.0 -m "Releasing version v1.0.0"
 $ git tag v1.0.0
 ```
 
+##### Pushing Tag to Origin
+
+```
+$ git push <location> <tag_identifier>
+```
+
+Example
+
+```
+$ git push origin 01
+```
+
 ### Our Tagging / Release Process
 
 0. Development notes and thoughts kept in the, "/notes" folder. Documentation images kept in "img."
 1. Finish up a version of code and release under normal commit habits, without tagging. Project code kept in a .js file, "main.js," with instructions on how to copy/paste this code into the online IDE.
 2. Commit messages for Pre-Release will specifically mention that a particular commit is pre-release, testing status if passing or failing (manual testing).
 3. After Pre-Release, make slight modification to Readme file, then annotated tag as release with versioning.
+4. Push tag to origin. "Publishing tags - git push <location> <tag_identifier>"
 4. Add release dictionary version update to Readme file under, "Markdown.md#versioning" for easy reference.
+
+* Naming convention for the release versions will use two decimal places, 01, 02, ... 0N., etc with decimal numbering.
+
+Example:
+
+```
+$ git tag -a 01 -m "Tested version release."
+```
+
 
 #### References
 
