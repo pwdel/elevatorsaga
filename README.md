@@ -18,6 +18,12 @@ Attempting the elevator saga challenge.
 
 Versioning and releases are kept track of via [tagging](/notes/tagging_releases.md).
 
+| Applicable Challenge                             | Tagged Release Version |
+|--------------------------------------------------|------------------------|
+| [01](https://play.elevatorsaga.com/#challenge=1) | 01                     |
+| [02](https://play.elevatorsaga.com/#challenge=2) | 02                     |
+| [03](https://play.elevatorsaga.com/#challenge=3) | 03                     |
+
 ### Behind the Scenes
 
 #### Why Build this Project
