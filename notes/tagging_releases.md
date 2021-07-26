@@ -32,7 +32,7 @@ $ git tag v1.0.0
 1. Finish up a version of code and release under normal commit habits, without tagging. Project code kept in a .js file, "main.js," with instructions on how to copy/paste this code into the online IDE.
 2. Commit messages for Pre-Release will specifically mention that a particular commit is pre-release, testing status if passing or failing (manual testing).
 3. After Pre-Release, make slight modification to Readme file, then annotated tag as release with versioning.
-4. Add release dictionary to Readme file.
+4. Add release dictionary version update to Readme file under, "Markdown.md#versioning" for easy reference.
 
 #### References
 
