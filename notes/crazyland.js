@@ -28,8 +28,6 @@
           // Maybe tell the elevator to go to that floor?
           console.log('interiorRequests to floorNum: ',floorNum)
         });
-        // array of pressed getPressedFloors
-        console.log('exteriorRequests',elevator.getPressedFloors())
 
         // Check exterior requests prior to each passing_floor with floor_button_pressed - exteriorRequests
         floors.forEach(function(floor){
@@ -42,14 +40,14 @@
         });
 
 
-        // Check current floor numbers and direction
+        // Check current floor numbers and direction for passing floors
+        // this gets triggered just previous to a floor being passed, in case stop is needed
         elevator.on("passing_floor", function(floorNum, direction) {
           // print the passing floor
-          console.log('passing floorNum: ',floorNum)
+          console.log('passingFloorNum: ',floorNum)
           // print the direction
           console.log('direction: ',direction)
           });
-
 
 
         // combine interiorRequests and exteriorRequests into allRequests, order allRequests sequentially relative to current position and SCAN direction
