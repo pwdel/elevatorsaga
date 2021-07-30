@@ -17,6 +17,29 @@
 
 
 
+        // ----------> EVENT VARIABLE GENERATION <----------
+
+        // Generate floorNum, prior to elevator passing floor
+        // check floor we are just about to pass
+        // this gets triggered just previous to a floor being passed, in case stop is needed
+        var floorNumDetect = elevator.on("passing_floor", function(floorNum, direction) {
+            // assign variable
+            floorNumPass = floorNum;
+            // print the passing floor
+            console.log('event detected...passingFloorNum: ',floorNumPass)
+            // print the direction
+            console.log('direction: ',direction)
+        });
+
+
+        // attempt to detect floorNum to be able to print to console
+
+        // console.log('floorNumDetect object property names : ',Object.keys(floorNumDetect))
+        console.log('floorNumDetect.currentFloor : ',floorNumDetect.currentFloor[0])
+
+
+
+
         // ----------> FUNCTION DECLARATIONS <----------
 
         // ******** Principal Destination Queue Setting Function ********
@@ -41,24 +64,20 @@
             } else {} // pass
         };
 
+
         // ******** Principal Scan Direction Setting Function ********
         // reset the dominant scan direction, scanDirection, if reached opposite floor
-        scandirectionSetter = function(TOPFLOOR, BOTTOMFLOOR, elevator){
+        scandirectionSetter = function(TOPFLOOR, BOTTOMFLOOR, elevator, floorNumPass){
 
-            // check floor we are just about to pass
-            // this gets triggered just previous to a floor being passed, in case stop is needed
-            elevator.on("passing_floor", function(floorNum, direction) {
-                // print the passing floor
-                console.log('passingFloorNum: ',floorNum)
-                // we now have the floorNum
-            });
+            // print the registered passing floor this function reads
+            console.log('passingFloorNum: ',floorNumPass)
 
             // if we reached the TOPFLOOR, re-set scanDirection
-            if ( floorNum == TOPFLOOR) {
+            if ( floorNumPass == TOPFLOOR) {
                 // reset scan direction to down
                 scanDirection = "DOWN"
                 console.log('scanDirection set to: ',scanDirection)
-            } else if ( floorNum == BOTTOMFLOOR) {
+            } else if ( floorNumPass == BOTTOMFLOOR) {
                 // reset scan direction to up
                 scanDirection = "UP"
                 console.log('scanDirection set to: ',scanDirection)
