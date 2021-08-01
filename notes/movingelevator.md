@@ -117,3 +117,73 @@ passingFloor, by definition:
 Therefore, since we created, floorNumDetect as an object based upon the, "passingFloor" event, the, "floorNum" should correspond to having just been triggered.  However, setting a variable this way does not seem to be the main way to do this within Javascript.
 
 [This article](https://forum.freecodecamp.org/t/update-global-var-inside-a-function/293752/4) goes through a mechanism to listen for an "event," and change a variable using something called, "getters and setters."
+
+### Getting Proper Floor Reporting Variables
+
+There are two main types of variables which could hypothetically be created out of the, "passing floor" function - a function with empty parameters (in the below shown as floorNumDetect), or an actual number showing the passing floors (floorNumPass).
+
+```
+// ----------> EVENT VARIABLE GENERATION <----------
+
+// Generate floorNum, prior to elevator passing floor
+// check floor we are just about to pass
+// this gets triggered just previous to a floor being passed, in case stop is needed
+floorNumDetect = elevator.on("passing_floor", function(floorNum, direction) {
+    // assign variable
+    var floorNumPass = floorNum;
+    // print the passing floor
+    console.log('event detected inside function...floorNumPass: ',floorNumPass)
+    // print the direction
+    // console.log('direction: ',direction)
+    return floorNumPass
+});
+
+// ***** TESTING EVENT VARIABLES *****
+
+// attempt to detect floorNum to be able to print to console outside of function
+// floorNumDetect gives you an object representing the function with a number of empty properties
+console.log('floorNumDetect, outside of function is: ',floorNumDetect)
+
+// floorNumDetect gives you the number of the floor recently passed (but not stopped at)
+// note - this does not give the last floor
+console.log('floorNumPass, outside of function is: ',floorNumPass)
+```
+
+floorNumPass is really what we are looking for, however there is a problem inherent in our previous code design in that it can only detect the second to last floor on either top or bottom side, so our switching logic will need to be adjusted.
+
+### Creating a Main Loop to Switch Between "scandirectionSetter()" and "queueSetter()"
+
+Basically we would like to create a while loop which just runs while the program runs, or a for loop that runs for a fixed number of seconds.
+
+Note that the actual, "currentfloor" can be detected with:
+
+```
+if(elevator.currentFloor() === 0) {
+    // Do something special?
+}
+```
+of course note that elevator would need to be passed into a function to be able to do this.
+
+#### Breaking Down and Simplifying Problem
+
+Side discussion on this has been continued under [these notes](/notes/mainloop.md).
+
+#### Attempting to Add to update:{}
+
+The below did not work because the functions are not callable within "update:"
+
+```
+update: function(dt, elevators, floors) {
+    // We normally don't need to do anything here
+    // ----------> MAIN ROUTINE <----------
+    // Loop between scanDirection and queueSetter
+
+
+    // check and switch principal scan direction if reached either top or bottom
+    scanDirection = scandirectionSetter(TOPFLOOR, BOTTOMFLOOR, floorNumPass)
+
+    // elevator.destinationQueue and elevator.checkDestinationQueue()
+    queueSetter(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator)
+
+}
+```
