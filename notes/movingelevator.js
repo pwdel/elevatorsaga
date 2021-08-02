@@ -26,37 +26,13 @@
 
         // ----------> EVENT VARIABLE GENERATION <----------
 
-        // Generate floorNum, prior to elevator passing floor
-        // check floor we are just about to pass
-        // this gets triggered just previous to a floor being passed, in case stop is needed
-        floorNumDetect = elevator.on("passing_floor", function(floorNum, direction) {
-            // assign variable
-            var floorNumPass = floorNum;
-            // print the passing floor
-            console.log('event detected inside function...floorNumPass: ',floorNumPass)
-            // print the direction
-            // console.log('direction: ',direction)
-            return floorNumPass
-        });
-
-
-        // getting the current floor
-        var currentFloorNow = elevator.currentFloor();
-        console.log('currentFloorNow is: ',currentFloorNow)
-
 
 
         // ***** TESTING EVENT VARIABLES *****
 
-        // attempt to detect floorNum to be able to print to console outside of function
-        // floorNumDetect gives you an object representing the function with a number of empty properties
-        console.log('floorNumDetect, outside of function is: ',floorNumDetect)
-
-        // floorNumDetect gives you the number of the floor recently passed (but not stopped at)
-        // note - this does not give the last floor
-        console.log('floorNumPass, outside of function is: ',floorNumPass)
-
-
+        // getting the current floor
+        var currentFloorNow = elevator.currentFloor();
+        console.log('currentFloorNow is: ',currentFloorNow)
 
 
         // ----------> FUNCTION DECLARATIONS <----------
@@ -90,22 +66,37 @@
 
         // ******** Principal Scan Direction Setting Function ********
         // reset the dominant scan direction, scanDirection, if reached opposite floor
-        scandirectionSetter = function(TOPFLOOR, BOTTOMFLOOR, floorNumPass){
+        scanDirectionSetter = function(TOPFLOOR, BOTTOMFLOOR, elevator){
             // notify function used
             console.log("scandirectionSetter invoked.")
+
+            // finding current floor
+            // getting the current floor
+            var currentFloorNow = elevator.currentFloor();
+            console.log('currentFloorNow is: ',currentFloorNow)
+
+
             // Note - floorNumPass does not give the top/bottom floor, it only gives the second to last.
             // the logic is such that you don't, "pass" those floors
+            // invoke elevator function to get floorNumPass
+            elevator.on("passing_floor", function(floorNum, direction) {
+                // set floorNum to floorNumPass to distinguish that we extracted variable
+                var floorNumPass = floorNum;
+                // log to console
+                console.log('printing floorNumPass in scanDirectionSetter',floorNumPass)
+            });
+
             // print the registered passing floor this function reads
-            console.log('passingFloorNum inside scandirectionSetter: ',floorNumPass)
+            // console.log('floorNumPass inside scandirectionSetter confirm: ',floorNumPass)
             // if we reached right prior to TOPFLOOR, re-set scanDirection
             // note, we can't measure TOPFLOOR directly
-            if ( floorNumPass == TOPFLOOR-1) {
+            if ( currentFloorNow == TOPFLOOR ) {
                 // reset scan direction to down
                 scanDirection = "DOWN"
                 console.log('scanDirection set to: ',scanDirection)
-            // if we reached right prior to BOTTOMFLOOR, re-set ScanDirection
-            // note, we can't measure BOTTOMFLOOR directly
-            } else if ( floorNumPass == BOTTOMFLOOR+1) {
+                // if we reached right prior to BOTTOMFLOOR, re-set ScanDirection
+                // note, we can't measure BOTTOMFLOOR directly
+            } else if ( currentFloorNow == BOTTOMFLOOR ) {
                 // reset scan direction to up
                 scanDirection = "UP"
                 console.log('scanDirection set to: ',scanDirection)
@@ -125,7 +116,7 @@
             // invoking idle
             console.log(" --> idle loop function <-- ")
             // check and switch principal scan direction if reached either top or bottom
-            scanDirection = scandirectionSetter(TOPFLOOR, BOTTOMFLOOR, floorNumPass)
+            scanDirection = scanDirectionSetter(TOPFLOOR, BOTTOMFLOOR, elevator)
             // elevator.destinationQueue and elevator.checkDestinationQueue()
             queueSetter(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator)
 
