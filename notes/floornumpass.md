@@ -57,3 +57,5 @@ Creating a dummy function, which fires when the elevator moves up and down:
 ```
 
 The above function prints out the floornumber as the floor is passed, which shows that passing the elevator objet into a function can allow a floornumberpassed function to be invoked.
+
+Given this, we can use the same technique to obtain the floorNumPass variable inside of other functions by using "elevator" as an input to said variable.

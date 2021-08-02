@@ -187,3 +187,22 @@ update: function(dt, elevators, floors) {
 
 }
 ```
+### Using floornumpass.js to Ensure Function Accesses FloorNumber
+
+* [floornumpass.js](/notes/floornumpass.js) shows that the floor number can be extracted and accessed within a dummy function, as long as "elevator" is passed to that function.
+* Utilizing this principal, we can feed elevator into [movingelevator.js](/notes/movingelevator.js).
+
+Using the elevator as a passed object, the function is able to read floor numbers.
+
+However, if we use only the, "floorNumPass" variable, the elevator never leaves the first floor because it's never, "passing" the first floor.
+
+### Setting and Utilizing currentFloorNow as a Variable to Move Elevator
+
+Adding the following into [movingelevator.js](/notes/movingelevator.js) to finalize the up and down scan movement works.
+
+```
+// finding current floor
+// getting the current floor
+var currentFloorNow = elevator.currentFloor();
+console.log('currentFloorNow is: ',currentFloorNow)
+```
