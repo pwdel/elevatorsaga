@@ -16,12 +16,18 @@
 
         // move the elevator up and down
         elevator.on("idle", function() {
-            elevator.goToFloor(4);
-            elevator.goToFloor(0);
-        });
 
-        // invoke dummyFunction
-        dummyFunction(elevator)
+          // invoke dummyFunction
+          dummyFunction(elevator)
+
+          elevator.goToFloor(4);
+
+          // invoke dummyFunction
+          dummyFunction(elevator)
+
+
+          elevator.goToFloor(0);
+        });
 
 
     },
