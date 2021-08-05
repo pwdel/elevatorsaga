@@ -144,38 +144,132 @@ But what event tells us that we are at a floor precisely?  The elevator idle fun
 > elevator.destinationQueue = [];
 > elevator.checkDestinationQueue();
 
-* the Queue must be manually loaded, it is an array we can check to see if we had already added an instruction from the interiorrequestdictionary, before adding to the interiorRequestsDictdictionary again possibly.
-* We could also potentially check the interorRequestsDict to see if the elevator API, "removed" an item from the array, and if so, 
+* the destinationQueue must be manually loaded, it is an array we can check to see if we had already added an instruction from the interiorrequestdictionary, before adding to the interiorRequestsDictdictionary again possibly.
+* We could also potentially check the interorRequestsDict to see if the elevator API, "removed" an item from the array, and if so, take off of interiorRequestsDictionary
 
 So what's the logic?
 
 ```
-// if
+// check each value of destinationQueue, Vn
+
+// check each value of previous destinationQueue, Vp
+
+// if a given Vp is not in Vn
+
+// this means the floor was reached, and has been removed from the queue.
+
+// find that value in interiorrequestdictionary and set to 0
 
 ```
 
-Translating this into code:
+Translating the above into code, we use a, "for / of" loop to loop through an iterable as follows:
+
+```
+// destination queue example
+elevator.destinationQueue = [1,2,3,4];
+elevator.checkDestinationQueue();
+
+currentDestinationQueue = elevator.destinationQueue;
+
+// go through each element in the currentDestinationQueue
+for (let x of currentDestinationQueue) {
+  console.log( currentDestinationQueue[x] );
+}
+
+// update destination queue again based upon elevator movement
+elevator.checkDestinationQueue();
+
+```
+
+The above code, implemented at [destinationQueueCheck.js](/notes/destinationQueueCheck.js) prints out the following:
+
+```
+hello world.
+2
+3
+4
+```
+Of course the task at hand is not simply to print out, but to check the currentQueue and compare to the previousQueue.
+
+```
+// checking the current queue and comparing to previous queue
+
+...
+
+// destination queue example
+elevator.destinationQueue = [1,2,3,4];
+elevator.checkDestinationQueue();
+
+// set variable name, don't use actual queue
+currentDestinationQueue = elevator.destinationQueue;
+
+// go through each element in the currentDestinationQueue
+for (let x of currentDestinationQueue) {
+  // put array value into variable
+  let queueNow = currentDestinationQueue[x];
+  // log to console
+  console.log( queueNow );
+  // print previous destination queue
+  console.log(previousDestinationQueue)
+}
+
+// set as previous destination queue
+previousDestinationQueue = elevator.destinationQueue;
+
+// update destination queue again based upon elevator movement
+elevator.checkDestinationQueue();
+
+...
+
+```
+After running the above, we get the following printout:
+
+> currentDestinationQueue does not include:  0
+> remove:  0 from interiorRequestsDict
+> currentDestinationQueue includes:  1
+> currentDestinationQueue includes:  2
+> currentDestinationQueue includes:  3
+> currentDestinationQueue includes:  4
+
+Basically the logic is finding that 0, from the previous destinationQueue, is not included in our current destinationQueue, and therefore interiorRequestsDict could be set to value 0 at key 0.
+
+Expanding upon this logic, we can build a final function which gets plugged back into [interiorrequestsdictionary.js](/notes/interiorrequestsdictionary.js).
+
+The general logic of the interiorrequestsdictionary.js file is as follows:
 
 ```
 ...
 
-// open the current floor variable
-// naming this variable in line with naming convention from other functions "currentFloorNow"
-var currentFloorNow = elevator.currentFloor();
+// invoke elevator function
 
-// for currentFloorNow variable in object, interorRequestsDict
-for ( currentFloorNow in interiorRequestsDict){
-  // run if statement
-  if (interiorRequestsDict[currentFloorNow]){
+// sample interior requests
 
-  };
-}
+// add interiorFloorNumReq to requisite position in interiorRequestsDict
+// javascript objects are accessed by keys which are strings.
 
-if ( currentFloorNow = ) {
-  // switch
+// convert current floor number request to a string
+// interiorFloorNumberString variable
 
-}
+// access the value at key interiorFloorNumberString, set to "1" (on)
 
-interiorRequestsDict[interiorFloorNumberString] = 1;
+// log to console to ensure was created correctly
+
+// zero out dictionary value by key if a particular floor was visited
+// since the last time queue was modified.
+
 
 ```
+
+The last line in that logic could be served by, "destinationQueueCheck," which could hypothetically be its own function. The output of destinationQueueCheck(elevator) could be
+
+Our overall main architecture:
+
+1. scanDirection = scanDirectionSetter(TOPFLOOR, BOTTOMFLOOR, elevator)
+
+2. queueSetter(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator)
+      |_ requestsDictionary()
+      |   |_ interiorRequestsSetter() // looks at interior requests and enters value 1 into key
+      |   |_ destinationChecker()  // checks if destination was hit on last move, sets value 0 into key
+      |_ scanDirectionPointer() // based upon scan direction, sets either TOPFLOOR or BOTTOMFLOOR to 1 and other to 0
+      |_ requestsDictTranslator() // translates dict to array output, sets queue
+          |_ 
