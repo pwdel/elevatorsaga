@@ -19,10 +19,19 @@
         console.log('the TOPFLOOR is: ',TOPFLOOR)
         console.log('the BOTTOMFLOOR is: ',BOTTOMFLOOR)
 
+        // setup blank interior requests dictionary.
+        var interiorRequestsDict = {}; // interior requests dictionary
+
+        // initialize interior request dictionry to all zero status.
+        for (var x = 0; x < TOPFLOOR+1; x++) {
+            // property name is x, or the number of the floor
+            // value of each object starts as zero
+            interiorRequestsDict[x] = 0;
+        }
+
         // set initial scanDirection: UP/DOWN string
         var scanDirection = 'UP';
         console.log("Setting initial scanDirection to: ",scanDirection)
-
 
         // ----------> EVENT VARIABLE GENERATION <----------
 
@@ -34,46 +43,72 @@
 
         // ----------> HELPER FUNCTION DECLARATIONS <----------
 
-        // ******** Principal Destination Queue Setting Function ********
-
+        // ******** destinationChecker Function ********
         // destinationChecker()  // checks if destination was hit on last move, sets value 0 into key
+        function destinationChecker(elevator){
+            // retrieve elevator destinationQueue.
+            elevator.checkDestinationQueue();
 
-        destinationChecker(elevator){
-          // retrieve elevator destinationQueue.
-          elevator.checkDestinationQueue();
+            // set variable name, don't use actual queue
+            var currentDestinationQueue = elevator.destinationQueue;
 
-          // set variable name, don't use actual queue
-          var currentDestinationQueue = elevator.destinationQueue;
+            // go through each element in the previousDestinationQueue, if exists
+            // print previousDestinationQueue if defined
+            if (typeof previousDestinationQueue != "undefined") {
+                // previousDestinationQueue found
+                console.log("previousDestinationQueue found, value is: ",previousDestinationQueue)
+                // check each element of previousDestinationQueue against queueNow
+                for (let y of previousDestinationQueue) {
+                    // checking individual previousDestinationQueue array value
+                    var prevQueueValue = previousDestinationQueue[y];
+                    // if prevQueueValue is defined
+                    if (typeof prevQueueValue != "undefined") {
+                        // prevQueueValue found
+                        console.log("prevQueueValue found, value is: ",prevQueueValue)
+                        console.log("checking if prevQueueValue is in currentDestinationQueue")
+                        // and if prevQueueValue included in currentDestinationQueue, do nothing.
+                        if ( currentDestinationQueue.includes(prevQueueValue) ) {
+                            console.log("currentDestinationQueue includes: ",prevQueueValue)
+                        }
+                        // if prevQueueValue not included in currentDestinaionQueue
+                        else {
+                            console.log("currentDestinationQueue does not include: ",prevQueueValue)
+                            console.log("remove: ",prevQueueValue,"from interiorRequestsDict")
+                        } // end checking if destinationQueue included prevQueueValue
+                    } // end make sure prevQuevalue exists
+                } // end iterate through previousDestinationQueue
+            } // end make sure previousDestinationQueue exists
 
-          // go through each element in the previousDestinationQueue, if exists
-          // print previousDestinationQueue if defined
-          if (typeof previousDestinationQueue != "undefined") {
-              // check each element of previousDestinationQueue against queueNow
-              for (let y of previousDestinationQueue) {
-                  // checking individual previousDestinationQueue array value
-                  var prevQueueValue = previousDestinationQueue[y];
-                  // if prevQueueValue is defined
-                  if (typeof prevQueueValue != "undefined") {
-                      // and if prevQueueValue included in currentDestinationQueue, do nothing.
-                      if ( currentDestinationQueue.includes(prevQueueValue) ) {
-                          console.log("currentDestinationQueue includes: ",prevQueueValue)
-                      }
-                      // if prevQueueValue not included in currentDestinaionQueue
-                      else {
-                          console.log("currentDestinationQueue does not include: ",prevQueueValue)
-                          console.log("remove: ",prevQueueValue,"from interiorRequestsDict")
-                      } // end checking if destinationQueue included prevQueueValue
-                  } // end make sure prevQuevalue exists
-              } // end iterate through previousDestinationQueue
-          } // end make sure previousDestinationQueue exists
+            // set as previous destination queue
+            previousDestinationQueue = elevator.destinationQueue;
+            // update destination queue again based upon elevator movement
+            elevator.checkDestinationQueue();
 
-          // set as previous destination queue
-          previousDestinationQueue = elevator.destinationQueue;
-          // update destination queue again based upon elevator movement
-          elevator.checkDestinationQueue();
-          // update destination queue again based upon elevator movement
-          elevator.checkDestinationQueue();
         } // end destinationChecker(elevator)
+
+        // ******** interiorRequestsSetter Function ********
+        // interiorRequestsSetter()  // checks if request was made interior to elevator, sets interorRequestDict to on position
+        function interiorRequestsSetter(elevator, interiorRequestsDict){
+            console.log("interiorRequestSetter invoked.")
+            // sample interior requests
+            elevator.on("floor_button_pressed", function(floorNum) {
+                // note interior request floorNum
+                interiorFloorNumReq = floorNum
+                // Maybe tell the elevator to go to that floor?
+                console.log('interiorFloorNumReq: ',interiorFloorNumReq)
+            }); // end floorNum sampling
+
+            // add interiorFloorNumReq to requisite position in interiorRequestsDict
+            // javascript objects are accessed by keys which are strings.
+            // convert current floor number request to a string
+            // interiorFloorNumberString variable
+            var interiorFloorNumberString = interiorFloorNumReq.toString()
+            // access the value at key interiorFloorNumberString, set to "1" (on)
+            interiorRequestsDict[interiorFloorNumberString] = 1;
+            // log to console to ensure was created correctly
+            console.log('interiorRequestsDict: ',interiorRequestsDict)
+        }
+
 
 
 
@@ -82,9 +117,10 @@
         // ******** Principal Destination Queue Setting Function ********
         // function to move elevator up and down using destinationQueue
         // scanDirection shows the dominant scan direction at the present time
-        queueSetter = function(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator){
+        queueSetter = function(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator, interiorRequestsDict){
             // notify function used
             console.log("queueSetter invoked.")
+
             // if scanDirection is up, destination queue shows TOPFLOOR next
             if (scanDirection == "UP") {
                 console.log('scanDirection is UP')
@@ -103,7 +139,17 @@
                 // console
                 console.log('resetting destinationQueue: ',elevator.destinationQueue)
             } else {} // pass
+
+            // invoking non-linked destinationChecker
+            console.log("invoking destinationChecker")
+            destinationChecker(elevator)
+
+            // invoking non-linked interiorRequestsSetter
+            console.log("invoking interiorRequestsSetter")
+            interiorRequestsSetter(elevator, interiorRequestsDict)
         };
+
+
 
 
         // ******** Principal Scan Direction Setting Function ********
@@ -160,7 +206,7 @@
             // check and switch principal scan direction if reached either top or bottom
             scanDirection = scanDirectionSetter(TOPFLOOR, BOTTOMFLOOR, elevator)
             // elevator.destinationQueue and elevator.checkDestinationQueue()
-            queueSetter(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator)
+            queueSetter(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator,interiorRequestsDict)
 
         });
 

@@ -37,7 +37,6 @@
 
           // add interiorFloorNumReq to requisite position in interiorRequestsDict
           // javascript objects are accessed by keys which are strings.
-
           // convert current floor number request to a string
           // interiorFloorNumberString variable
           var interiorFloorNumberString = interiorFloorNumReq.toString()
