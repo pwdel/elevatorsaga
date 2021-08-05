@@ -39,17 +39,12 @@
                 }
             }
 
-
             // set as previous destination queue
             previousDestinationQueue = elevator.destinationQueue;
-
             // update destination queue again based upon elevator movement
             elevator.checkDestinationQueue();
-
-
             // update destination queue again based upon elevator movement
             elevator.checkDestinationQueue();
-
         }
 
         // move the elevator up and down

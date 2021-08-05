@@ -272,4 +272,8 @@ Our overall main architecture:
       |   |_ destinationChecker()  // checks if destination was hit on last move, sets value 0 into key
       |_ scanDirectionPointer() // based upon scan direction, sets either TOPFLOOR or BOTTOMFLOOR to 1 and other to 0
       |_ requestsDictTranslator() // translates dict to array output, sets queue
-          |_ 
+          |_ scanDirectionOrderSetter() // based upon the scan direction and current position, order the queue
+
+The various functions below 2.) queueSetter are helper functions which can be arranged in the IDE above the queueSetter() function.
+
+Discussion on building this functionality can be continued at [movingelevatorwithhelpers.md](/notes/movingelevatorwithhelpers.md) with the build file at [movingelevatorwithhelpers.js](/notes/movingelevatorwithhelpers.js).
