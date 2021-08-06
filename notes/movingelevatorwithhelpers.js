@@ -74,6 +74,7 @@
                         else {
                             console.log("currentDestinationQueue does not include: ",prevQueueValue)
                             console.log("remove: ",prevQueueValue,"from interiorRequestsDict")
+                            return prevQueueValue;
                         } // end checking if destinationQueue included prevQueueValue
                     } // end make sure prevQuevalue exists
                 } // end iterate through previousDestinationQueue
@@ -89,25 +90,141 @@
         // ******** interiorRequestsSetter Function ********
         // interiorRequestsSetter()  // checks if request was made interior to elevator, sets interorRequestDict to on position
         function interiorRequestsSetter(elevator, interiorRequestsDict){
-            console.log("interiorRequestSetter invoked.")
+            console.log("interiorRequestSetter activated.")
+            // to check interiorRequestDict on input
+            // console.log("input interiorRequestsDict is: ",interiorRequestsDict)
             // sample interior requests
             elevator.on("floor_button_pressed", function(floorNum) {
                 // note interior request floorNum
                 interiorFloorNumReq = floorNum
                 // Maybe tell the elevator to go to that floor?
                 console.log('interiorFloorNumReq: ',interiorFloorNumReq)
-            }); // end floorNum sampling
 
-            // add interiorFloorNumReq to requisite position in interiorRequestsDict
-            // javascript objects are accessed by keys which are strings.
-            // convert current floor number request to a string
-            // interiorFloorNumberString variable
-            var interiorFloorNumberString = interiorFloorNumReq.toString()
-            // access the value at key interiorFloorNumberString, set to "1" (on)
-            interiorRequestsDict[interiorFloorNumberString] = 1;
-            // log to console to ensure was created correctly
-            console.log('interiorRequestsDict: ',interiorRequestsDict)
-        }
+                // add interiorFloorNumReq to requisite position in interiorRequestsDict
+                // javascript objects are accessed by keys which are strings.
+                // convert current floor number request to a string
+                // interiorFloorNumberString variable
+                var interiorFloorNumberString = interiorFloorNumReq.toString()
+
+                // access the value at key interiorFloorNumberString, set to "1" (on)
+                interiorRequestsDict[interiorFloorNumberString] = 1;
+
+                // log to console to ensure was created correctly
+                // console.log('ending interiorRequestsDict is: ',interiorRequestsDict)
+            });
+
+            console.log('output interiorRequestsDict is: ',interiorRequestsDict)
+            // return interiorRequestDict
+            return interiorRequestsDict;
+
+        } // end interiorRequestsSetter() function
+
+        // ******** requestsDictionaryWorker Function ********
+        function requestsDictionaryWorker(elevator, interiorRequestsDict){
+            // invoke message
+            console.log("requestsDictionaryWorker activated.");
+
+            // invoking non-linked interiorRequestsSetter
+            console.log("invoking interiorRequestsSetter");
+            interiorRequestsDict = interiorRequestsSetter(elevator, interiorRequestsDict);
+
+            // invoking non-linked destinationChecker
+            console.log("invoking destinationChecker");
+            // grab return value
+            var queueValueToRemove = destinationChecker(elevator);
+            // print queueValueToRemove
+            console.log("queueValueToRemove: ",queueValueToRemove);
+
+            // set overall dictionary
+            var overallRequestsDict = interiorRequestsDict;
+            // turn off any floor requests, "queueValueToRemove" on interiorRequestsDict based upon value from destinationChecker
+            overallRequestsDict[queueValueToRemove] = 0;
+            // print new result of overallRequestsDict
+            console.log("updated overallRequestsDict is now: ",overallRequestsDict)
+
+            // return, output of function
+            return overallRequestsDict;
+        } // end of requestsDictionaryWorker()
+
+        // ******** requestsDictTranslator Function ********
+        function requestsDictTranslator(elevator,interiorRequestsDict){
+            // take interiorRequestsDict and turn into array
+            var floorRequestValues = Object.values(interiorRequestsDict);
+            // print floorRequestValues to console to inspect
+            console.log("unordered floorRequestValues: ",floorRequestValues);
+            // return to exterior of function
+            return floorRequestValues;
+        } // end of requestsDictTranslator function
+
+
+        // ******** scanDirectionOrderSetter() Function ********
+        function scanDirectionOrderSetter(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator, interiorRequestsDict){
+            // input TOPFLOOR, BOTTOMFLOOR, scanDirection, interiorRequestsDict
+            console.log("scanDirectionOrderSetter invoked.")
+            // get CURRENTFLOOR (currentFloorNow), NEXTFLOOR
+            // getting the current floor
+            var currentFloorNow = elevator.currentFloor();
+            console.log('currentFloorNow is: ',currentFloorNow)
+
+            // getting the passing floor, right prior to hitting the floor
+            // note - other functionality must happen within this function to access floorNumPass
+            elevator.on("passing_floor", function(floorNum, direction) {
+                // set floorNum to floorNumPass to distinguish that we extracted variable
+                var floorNumPass = floorNum;
+                // log to console
+                console.log('printing floorNumPass in scanDirectionSetter',floorNumPass)
+
+                // 1. if scanDirection is UP
+                if (scanDirection == 'UP') {
+                    // 1.1 if (CURRENTFLOOR < NEXTFLOOR) AND (NEXTFLOOR < TOPFLOOR)
+                    if (currentFloorNow < floorNumPass && floorNumPass < TOPFLOOR) {
+                        console.log("CONDITION: currentFloorNow < floorNumPass && floorNumPass < TOPFLOOR")
+                        // AND if interiorRequestsDict has a 1 for NEXTFLOOR
+                        if ( interiorRequestsDict[floorNumPass] == 1 ) {
+                            // put NEXTFLOOR into elevator.queue.
+                            elevator.destinationQueue = [floorNumPass];
+                            elevator.checkDestinationQueue();
+                            // after done, set interiorRequestsDict value at key NEXTFLOOR to 0.
+                            interiorRequestsDict[floorNumPass] = 0;
+                        } // end condition interiorRequestsDict[floorNumPass] == 1
+
+
+                    } else if (floorNumPass == TOPFLOOR) {
+                        console.log("floorNumPass == TOPFLOOR")
+                        // this statement can be ignored if we're using the scanDirectionSetter() function
+                        // put TOPFLOOR into elevator.queue.
+                        // switch principal scan direction
+                        // don't worry about interiorRequestsDict
+                    } // end conditional for whether CURRENTFLOOR < NEXTFLOOR && NEXTFLOOR < TOPFLOOR or NEXTFLOOR == TOPFLOOR
+
+                } else if (scanDirection == 'DOWN') {
+                    // 2. if scanDirecion is DOWN
+                    // 2.1 if (currentFloorNow > floorNumPass) AND (floorNumPass > BOTTOMFLOOR)
+                    if (currentFloorNow > floorNumPass && floorNumPass > BOTTOMFLOOR) {
+                        console.log("CONDITION: currentFloorNow > floorNumPass && floorNumPass > BOTTOMFLOOR")
+                        // AND if interiorRequestsDict has a 1 for NEXTFLOOR
+                        if ( interiorRequestsDict[floorNumPass] == 1 ) {
+                            // put NEXTFLOOR into elevator.queue.
+                            elevator.destinationQueue = [floorNumPass];
+                            elevator.checkDestinationQueue();
+                            // after done, set interiorRequestsDict value at key NEXTFLOOR to 0.
+                            interiorRequestsDict[floorNumPass] = 0;
+                        } // end condition interiorRequestsDict[floorNumPass] == 1
+                    } else if (floorNumPass == BOTTOMFLOOR) {
+                        console.log("CONDITION: floorNumPass == BOTTOMFLOOR")
+                        // 2.2 if (floorNumPass == TOPFLOOR)
+                        // put BOTTOMFLOOR into elevator.queue.
+                        // switch principal scan direction
+                        // don't worry about interiorRequestsDict
+                    } // end conditional for currentFloorNow > floorNumPass && floorNumPass > BOTTOMFLOOR or floorNumPass == BOTTOMFLOOR
+
+                } // end conditional for whether scandirection up or down
+
+            }); // end function for elevator.on("passing_floor", ~)
+
+
+          // ~~~ END OF scanDirectionOrderSetter() FUNCTION BELOW ~~~
+        } // end scanDirectionOrderSetter() function
 
 
 
@@ -140,13 +257,29 @@
                 console.log('resetting destinationQueue: ',elevator.destinationQueue)
             } else {} // pass
 
-            // invoking non-linked destinationChecker
-            console.log("invoking destinationChecker")
-            destinationChecker(elevator)
+            // invoking requetsDictonaryWorker
+            console.log("invoking requetsDictonaryWorker")
+            var interiorRequestsDict = requestsDictionaryWorker(elevator, interiorRequestsDict)
+            // result of requetsDictonaryWorker
+            console.log("result of requetsDictonaryWorker, interiorRequestsDict", interiorRequestsDict);
+            // take interiorRequestsDict, order it and put in elevator queue.
+            var queueSetup = requestsDictTranslator(elevator,interiorRequestsDict)
+            console.log("queueSetup input: ",queueSetup)
 
-            // invoking non-linked interiorRequestsSetter
-            console.log("invoking interiorRequestsSetter")
-            interiorRequestsSetter(elevator, interiorRequestsDict)
+            // set elevator.destinationQueue to next floor taking into account scan direction
+            scanDirectionOrderSetter(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator, interiorRequestsDict)
+
+            // send queueSetup to elevator as array
+            // must be defined before adding to elevator
+            /*
+            if (typeof queueSetup != "undefined") {
+                elevator.destinationQueue = [queueSetup];
+                console.log("elevator.destinationQueue is: ",elevator.destinationQueue)
+                elevator.checkDestinationQueue();
+            } // end check if queueSetup valid
+            */
+
+
         };
 
 
