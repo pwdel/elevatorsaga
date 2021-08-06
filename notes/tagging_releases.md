@@ -52,7 +52,9 @@ $ git push origin 01
 Example:
 
 ```
-$ git tag -a 01 -m "Tested version release."
+$ git tag -a 01 -m "Tested version release. Works on X but not Y"
+
+$ git push origin master
 ```
 
 
