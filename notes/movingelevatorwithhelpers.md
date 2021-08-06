@@ -111,3 +111,75 @@ scanDirectionOrderSetter() should have the following logic:
 * We don't have to pay attention to what overallRequestsDict says about the TOPFLOOR and BOTTOMFLOOR, we can use the overall scan direction to over-ride this function...we're going to hit either the top or bottom eventually so it doesn't matter if someone requested it.
 
 ### Turn ScanDirectionSetter within QueueSetter Into Function
+
+```
+// ******** scanDirectionOrderSetter() Function ********
+function scanDirectionOrderSetter(TOPFLOOR, BOTTOMFLOOR, scanDirection, elevator, interiorRequestsDict){
+    // input TOPFLOOR, BOTTOMFLOOR, scanDirection, interiorRequestsDict
+    console.log("scanDirectionOrderSetter invoked.")
+    // get CURRENTFLOOR (currentFloorNow), NEXTFLOOR
+    // getting the current floor
+    var currentFloorNow = elevator.currentFloor();
+    console.log('currentFloorNow is: ',currentFloorNow)
+
+    // getting the passing floor, right prior to hitting the floor
+    // note - other functionality must happen within this function to access floorNumPass
+    elevator.on("passing_floor", function(floorNum, direction) {
+        // set floorNum to floorNumPass to distinguish that we extracted variable
+        var floorNumPass = floorNum;
+        // log to console
+        console.log('printing floorNumPass in scanDirectionSetter',floorNumPass)
+
+        // 1. if scanDirection is UP
+        if (scanDirection == 'UP') {
+            // 1.1 if (CURRENTFLOOR < NEXTFLOOR) AND (NEXTFLOOR < TOPFLOOR)
+            if (currentFloorNow < floorNumPass && floorNumPass < TOPFLOOR) {
+                console.log("CONDITION: currentFloorNow < floorNumPass && floorNumPass < TOPFLOOR")
+                // AND if interiorRequestsDict has a 1 for NEXTFLOOR
+                if ( interiorRequestsDict[floorNumPass] == 1 ) {
+                    // put NEXTFLOOR into elevator.queue.
+                    elevator.destinationQueue = [floorNumPass];
+                    elevator.checkDestinationQueue();
+                    // after done, set interiorRequestsDict value at key NEXTFLOOR to 0.
+                    interiorRequestsDict[floorNumPass] = 0;
+                } // end condition interiorRequestsDict[floorNumPass] == 1
+
+
+            } else if (floorNumPass == TOPFLOOR) {
+                console.log("floorNumPass == TOPFLOOR")
+                // this statement can be ignored if we're using the scanDirectionSetter() function
+                // put TOPFLOOR into elevator.queue.
+                // switch principal scan direction
+                // don't worry about interiorRequestsDict
+            } // end conditional for whether CURRENTFLOOR < NEXTFLOOR && NEXTFLOOR < TOPFLOOR or NEXTFLOOR == TOPFLOOR
+
+        } else if (scanDirection == 'DOWN') {
+            // 2. if scanDirecion is DOWN
+            // 2.1 if (currentFloorNow > floorNumPass) AND (floorNumPass > BOTTOMFLOOR)
+            if (currentFloorNow > floorNumPass && floorNumPass > BOTTOMFLOOR) {
+                console.log("CONDITION: currentFloorNow > floorNumPass && floorNumPass > BOTTOMFLOOR")
+                // AND if interiorRequestsDict has a 1 for NEXTFLOOR
+                if ( interiorRequestsDict[floorNumPass] == 1 ) {
+                    // put NEXTFLOOR into elevator.queue.
+                    elevator.destinationQueue = [floorNumPass];
+                    elevator.checkDestinationQueue();
+                    // after done, set interiorRequestsDict value at key NEXTFLOOR to 0.
+                    interiorRequestsDict[floorNumPass] = 0;
+                } // end condition interiorRequestsDict[floorNumPass] == 1
+            } else if (floorNumPass == BOTTOMFLOOR) {
+                console.log("CONDITION: floorNumPass == BOTTOMFLOOR")
+                // 2.2 if (floorNumPass == TOPFLOOR)
+                // put BOTTOMFLOOR into elevator.queue.
+                // switch principal scan direction
+                // don't worry about interiorRequestsDict
+            } // end conditional for currentFloorNow > floorNumPass && floorNumPass > BOTTOMFLOOR or floorNumPass == BOTTOMFLOOR
+
+        } // end conditional for whether scandirection up or down
+
+    }); // end function for elevator.on("passing_floor", ~)
+
+
+  // ~~~ END OF scanDirectionOrderSetter() FUNCTION BELOW ~~~
+} // end scanDirectionOrderSetter() function
+
+```
