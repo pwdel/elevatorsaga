@@ -29,7 +29,7 @@ Versioning and releases are kept track of via [tagging](/notes/tagging_releases.
 
 #### 03
 
-https://user-images.githubusercontent.com/13304149/128543655-5059cfbf-5584-4375-afcc-dca29352c196.mp4
+https://user-images.githubusercontent.com/13304149/128543978-80e31b55-4776-4391-a557-89bb68f9cedb.mp4
 
 ### Behind the Scenes
 
