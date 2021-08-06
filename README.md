@@ -21,8 +21,9 @@ Versioning and releases are kept track of via [tagging](/notes/tagging_releases.
 | Applicable Challenge                             | Tagged Release Version                                      |
 |--------------------------------------------------|-------------------------------------------------------------|
 | [01](https://play.elevatorsaga.com/#challenge=1) | [01](https://github.com/pwdel/elevatorsaga/releases/tag/01) |
-| [02](https://play.elevatorsaga.com/#challenge=2) | 02                                                          |
-| [03](https://play.elevatorsaga.com/#challenge=3) | 03                                                          |
+| [02](https://play.elevatorsaga.com/#challenge=2) | 02 - No specific release, 03 incompatible.                  |
+| [03](https://play.elevatorsaga.com/#challenge=3) | [03](https://github.com/pwdel/elevatorsaga/releases/tag/03) |
+| [04](https://play.elevatorsaga.com/#challenge=4) |                                                             |
 
 ### Behind the Scenes
 
