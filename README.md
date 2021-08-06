@@ -25,6 +25,12 @@ Versioning and releases are kept track of via [tagging](/notes/tagging_releases.
 | [03](https://play.elevatorsaga.com/#challenge=3) | [03](https://github.com/pwdel/elevatorsaga/releases/tag/03) |
 | [04](https://play.elevatorsaga.com/#challenge=4) |                                                             |
 
+### Functionality Video Releases
+
+#### 03
+
+https://user-images.githubusercontent.com/13304149/128543655-5059cfbf-5584-4375-afcc-dca29352c196.mp4
+
 ### Behind the Scenes
 
 #### Why Build this Project
