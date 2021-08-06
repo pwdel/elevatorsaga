@@ -54,9 +54,10 @@ Example:
 ```
 $ git tag -a 01 -m "Tested version release. Works on X but not Y"
 
-$ git push origin master
+$ git push origin new 01
 ```
 
+After this, do a pull request and edit the tag release comments.
 
 #### References
 
